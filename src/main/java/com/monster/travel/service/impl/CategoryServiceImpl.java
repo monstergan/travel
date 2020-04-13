@@ -6,6 +6,7 @@ import com.monster.travel.domain.Category;
 import com.monster.travel.service.CategoryService;
 import com.monster.travel.util.JedisUtil;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +19,27 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> findAll() {
         Jedis jedis = JedisUtil.getJedis();
         //使用sortedset排序查询
-        Set<String> categorys = jedis.zrange("category", 0, -1);
+        //Set<String> categorys = jedis.zrange("category", 0, -1);
+
+        //查询sortedset中的分数（cid）和（cname）
+        Set<Tuple> categorys = jedis.zrangeWithScores("category", 0, -1);
 
         List<Category> cs = null;
         if (categorys == null || categorys.size() == 0) {
-            System.out.println("查询的数据库....");
+//            System.out.println("查询的数据库....");
             cs = dao.findAll();
             for (int i = 0; i < cs.size(); i++) {
                 jedis.zadd("category", cs.get(i).getCid(), cs.get(i).getCname());
             }
         } else {
 
-            System.out.println("查询的缓存...");
+            //System.out.println("查询的缓存...");
             //如果不为空，将set的数据存入list
             cs = new ArrayList<Category>();
-            for (String name : categorys) {
+            for (Tuple tuple : categorys) {
                 Category c = new Category();
-                c.setCname(name);
+                c.setCname(tuple.getElement());
+                c.setCid((int) tuple.getScore());
                 cs.add(c);
             }
         }
