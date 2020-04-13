@@ -154,7 +154,7 @@ public class UserServlet extends BaseServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected void findOne(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void findOne(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         //从session中获取
         Object user = req.getSession().getAttribute("user");
 
@@ -171,7 +171,7 @@ public class UserServlet extends BaseServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected void exit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void exit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //销毁Session
         req.getSession().invalidate();
 
@@ -187,7 +187,7 @@ public class UserServlet extends BaseServlet {
      * @throws ServletException
      * @throws IOException
      */
-    protected void active(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void active(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //获取激活码
         String code = req.getParameter("code");
 
