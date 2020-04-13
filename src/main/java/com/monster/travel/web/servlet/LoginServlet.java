@@ -69,6 +69,7 @@ public class LoginServlet extends HttpServlet {
             info.setErrorMsg("您未激活账号，请登录邮箱激活...");
         }
         if (u != null && "Y".equals(u.getStatus())) {
+            req.getSession().setAttribute("user", u);
             //登录成功
             info.setFlag(true);
         }
