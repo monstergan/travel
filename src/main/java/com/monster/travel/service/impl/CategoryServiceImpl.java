@@ -32,7 +32,6 @@ public class CategoryServiceImpl implements CategoryService {
                 jedis.zadd("category", cs.get(i).getCid(), cs.get(i).getCname());
             }
         } else {
-
             //System.out.println("查询的缓存...");
             //如果不为空，将set的数据存入list
             cs = new ArrayList<Category>();

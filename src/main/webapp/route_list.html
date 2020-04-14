@@ -12,18 +12,114 @@
     <script>
         $(function () {
             var search = location.search;
-            alert(search);
 
             var cid = search.split("=")[1];
             load(cid);
+
         });
 
-        function load(cid,currentPage) {
-            $.get("route/pageQuery",{cid:cid,currentPage:currentPage},function (pb) {
+        function load(cid, currentPage) {
+            //发送ajax请求，请求route/pageQuery,传递cid
+            $.get("route/pageQuery", {cid: cid, currentPage: currentPage}, function (pb) {
                 $("#totalPage").html(pb.totalPage);
                 $("#totalCount").html(pb.totalCount);
+
+                var lis = "";
+
+                var firstPage = '<li onclick="javascript:load(' + cid + ')"><a href="javascript:void(0)">首页</a></li>';
+
+                //计算上一页的页码
+                var beforeNum = pb.currentPage - 1;
+                if (beforeNum <= 0) {
+                    beforeNum = 1;
+                }
+
+                var beforePage = '<li onclick="javascript:load(' + cid + ',' + beforeNum + ')" class="threeword"><a href="javascript:void(0)">上一页</a></li>';
+
+                lis += firstPage;
+                lis += beforePage;
+
+                //显示分页码
+                var begin;
+                var end;
+
+                if (pb.totalPage < 10) {
+                    //总页码不够10页
+                    begin = 1;
+                    end = pb.totalPage;
+                } else {
+                    //超过10页
+                    begin = pb.currentPage - 5;
+                    end = pb.currentPage + 4;
+
+                    //如果前面不够5个 后面补齐8个
+                    if (begin < 1) {
+                        begin = 1;
+                        end = begin + 9;
+                    }
+
+                    //如果后面不足4个，前边补齐10个
+                    if (end > pb.totalPage) {
+                        end = pb.totalPage;
+                        begin = end - 9;
+                    }
+                }
+
+                for (var i = begin; i < end; i++) {
+                    var li;
+
+                    //判断当前页是否等于1
+                    if (pb.currentPage == i) {
+                        li = '<li class="curPage" onclick="javascript:load(' + cid + ',' + i + ')"><a href="javascript:void(0)">' + i + '</a></li>';
+                    } else {
+                        //创建页码的li
+                        li = '<li onclick="javascript:load(' + cid + ',' + i + ')"><a href="javascript:void(0)">' + i + '</a></li>';
+                    }
+                    //拼接字符串
+                    lis += li;
+                }
+
+                var lastPage = '<li class="threeword"><a href="javascript:;">末页</a></li>';
+                var nextPage = '<li class="threeword"><a href="javascript:;">下一页</a></li>';
+
+                lis += nextPage;
+                lis += lastPage;
+
+                //将lis内容设置到ul
+                $("#pageNum").html(lis);
+
+                //列表数据展示
+                var route_lis = "";
+                for (var i = 0; i < pb.list.length; i++) {
+
+                    var route = pb.list[i];
+
+                    var li = '<li>\n' +
+                        '                        <div class="img"><img src="' + route.rimage + '" alt=""></div>\n' +
+                        '                        <div class="text1">\n' +
+                        '                            <p>' + route.rname + '</p>\n' +
+                        '                            <br/>\n' +
+                        '                            <p>' + route.routeIntroduce + '</p>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="price">\n' +
+                        '                            <p class="price_num">\n' +
+                        '                                <span>&yen;</span>\n' +
+                        '                                <span>' + route.price + '</span>\n' +
+                        '                                <span>起</span>\n' +
+                        '                            </p>\n' +
+                        '                            <p><a href="route_detail.html">查看详情</a></p>\n' +
+                        '                        </div>\n' +
+                        '                    </li>';
+
+                    route_lis += li;
+                }
+                $("#route").html(route_lis);
+
+                window.scrollTo(0,0);
             });
+
         }
+
     </script>
 </head>
 <body>
@@ -41,7 +137,7 @@
                     <span>商品信息</span>
                     <span class="jg">价格</span>
                 </div>
-                <ul>
+                <ul id="route">
                     <li>
                         <div class="img"><img src="images/04-search_03.jpg" alt=""></div>
                         <div class="text1">
