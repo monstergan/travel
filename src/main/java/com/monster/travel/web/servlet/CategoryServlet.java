@@ -1,6 +1,5 @@
 package com.monster.travel.web.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.monster.travel.domain.Category;
 import com.monster.travel.service.CategoryService;
 import com.monster.travel.service.impl.CategoryServiceImpl;
@@ -18,8 +17,7 @@ public class CategoryServlet extends BaseServlet {
     private CategoryService service = new CategoryServiceImpl();
 
     public void findAll(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        List<Category> list = service.findAll();
-        writeValue(list, resp);
+        List<Category> cs = service.findAll();
+        writeValue(cs, resp);
     }
 }
